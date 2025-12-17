@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tokio;
 use tracing::{Level, event};
+use uuid::Uuid;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
@@ -17,6 +18,7 @@ pub async fn publish_message(
 ) -> impl IntoResponse {
     let publisher = state.topic.new_publisher(None);
     let msg = TestContract {
+        id: Uuid::now_v7(),
         message: msg.message,
     };
 
@@ -31,13 +33,22 @@ pub async fn publish_message(
         awaiter.get().await
     });
 
-    publish_process.await.expect("").expect("");
+    let publish_result = publish_process
+        .await
+        .expect("Failed to get publish result.");
 
-    (
-        StatusCode::OK,
-        Json(json!({"response": "message successfully published"})),
-    )
-        .into_response()
+    match publish_result {
+        Ok(_) => (
+            StatusCode::OK,
+            Json(json!({"response": "message successfully published"})),
+        )
+            .into_response(),
+        Err(err) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({"error": err.to_string()})),
+        )
+            .into_response(),
+    }
 }
 
 pub async fn health(State(_state): State<AppState>) -> impl IntoResponse {

@@ -226,9 +226,10 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.17",
  "tokio",
- "tonic 0.14.2",
+ "tonic",
  "tracing",
  "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]
@@ -253,7 +254,7 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.17",
  "tokio",
- "tonic 0.12.3",
+ "tonic",
  "tracing",
  "tracing-subscriber",
 ]
@@ -514,7 +515,7 @@ dependencies = [
  "thiserror 1.0.69",
  "tokio",
  "tokio-retry2",
- "tonic 0.12.3",
+ "tonic",
  "tower 0.4.13",
  "tracing",
 ]
@@ -527,7 +528,7 @@ checksum = "886aa8ec755382a1fdf4651f6e6ec01f2f3bf49f2cb0f068b9a74cafd574a715"
 dependencies = [
  "prost",
  "prost-types",
- "tonic 0.12.3",
+ "tonic",
 ]
 
 [[package]]
@@ -1257,10 +1258,11 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.17",
  "tokio",
- "tonic 0.14.2",
+ "tonic",
  "tower-http",
  "tracing",
  "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]
@@ -1879,35 +1881,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tonic"
-version = "0.14.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb7613188ce9f7df5bfe185db26c5814347d110db17920415cf2fbcad85e7203"
-dependencies = [
- "async-trait",
- "axum 0.8.7",
- "base64 0.22.1",
- "bytes",
- "h2",
- "http",
- "http-body",
- "http-body-util",
- "hyper",
- "hyper-timeout",
- "hyper-util",
- "percent-encoding",
- "pin-project",
- "socket2 0.6.1",
- "sync_wrapper",
- "tokio",
- "tokio-stream",
- "tower 0.5.2",
- "tower-layer",
- "tower-service",
- "tracing",
-]
-
-[[package]]
 name = "tower"
 version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1935,12 +1908,9 @@ checksum = "d039ad9159c98b70ecfd540b2573b97f7f52c3e8d9f8ad57a24b916a536975f9"
 dependencies = [
  "futures-core",
  "futures-util",
- "indexmap 2.12.1",
  "pin-project-lite",
- "slab",
  "sync_wrapper",
  "tokio",
- "tokio-util",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -2075,6 +2045,18 @@ name = "utf8_iter"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be"
+
+[[package]]
+name = "uuid"
+version = "1.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2e054861b4bd027cd373e18e8d8d8e6548085000e41290d95ce0c373a654b4a"
+dependencies = [
+ "getrandom 0.3.4",
+ "js-sys",
+ "serde_core",
+ "wasm-bindgen",
+]
 
 [[package]]
 name = "valuable"

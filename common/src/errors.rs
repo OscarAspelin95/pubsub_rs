@@ -1,6 +1,7 @@
 use google_cloud_pubsub;
 use std;
 use thiserror::Error;
+use tonic::Status;
 
 #[derive(Debug, Error)]
 pub enum PubSubError {
@@ -12,4 +13,7 @@ pub enum PubSubError {
 
     #[error("Failed to create topic")]
     TopicCreationError(String),
+
+    #[error("Unknown error")]
+    UnknownError(#[from] Status),
 }

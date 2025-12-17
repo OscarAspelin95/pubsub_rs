@@ -1,17 +1,15 @@
+use common::{PubSubError, TestContract};
 use dotenv::dotenv;
 use futures_util::StreamExt;
 use tokio;
 use tracing::{Level, event};
 use tracing_subscriber;
-mod errors;
-use common::TestContract;
-use errors::ConsumerError;
 
 mod subscriber;
 use subscriber::create_subscriber;
 
 #[tokio::main]
-async fn main() -> Result<(), ConsumerError> {
+async fn main() -> Result<(), PubSubError> {
     tracing_subscriber::fmt::init();
     dotenv().ok();
 

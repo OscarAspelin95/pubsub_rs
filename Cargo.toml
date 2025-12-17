@@ -9,7 +9,8 @@ thiserror = {version = "2.0.17"}
 dotenv = {version = "0.15.0"}
 tracing = {version = "0.1.43"}
 tracing-subscriber = {version = "0.3.22"}
-tonic = {version = "*"}
+tonic = {version = "0.12"}
 google-cloud-googleapis = {version = "*"}
 serde = {version = "1.0.228"}
 serde_json = {version = "1.0.145"}
+uuid = {version = "1.19.0", features = ["v7", "serde"]}

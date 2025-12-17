@@ -18,3 +18,4 @@ tonic = { workspace = true }
 google-cloud-googleapis = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+uuid = {workspace = true}
