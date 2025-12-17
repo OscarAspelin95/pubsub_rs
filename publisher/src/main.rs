@@ -1,4 +1,10 @@
-use axum::{self, Json, extract::State, http::StatusCode, response::IntoResponse, routing::post};
+use axum::{
+    self, Json,
+    extract::State,
+    http::{Request, StatusCode},
+    response::IntoResponse,
+    routing::{get, post},
+};
 use common::{PubSubError, TestContract, create_client, create_topic};
 use dotenv::dotenv;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
@@ -44,6 +50,10 @@ async fn publish_message(
         .into_response()
 }
 
+async fn health(State(_state): State<AppState>) -> impl IntoResponse {
+    (StatusCode::OK, Json(json!({"response": "healthy"}))).into_response()
+}
+
 #[derive(Debug, Clone)]
 pub struct AppState {
     client: Client,
@@ -66,6 +76,7 @@ async fn main() -> Result<(), PubSubError> {
     // Later, we'll put this in the axum handler.
     let router = axum::Router::new()
         .route("/send_message", post(publish_message))
+        .route("/health", get(health))
         .layer(CorsLayer::permissive())
         .with_state(state);
 

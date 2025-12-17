@@ -5,3 +5,41 @@ services:
       - .env
     ports:
       - "8681:8681"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8681"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  rust-publisher:
+    build:
+      dockerfile: Dockerfile.publisher
+    env_file:
+      - .env
+    environment:
+      PUBSUB_EMULATOR_HOST: pubsub:8681
+    ports:
+      - "8080:8080"
+    depends_on:
+      pubsub:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  rust-consumer:
+    build:
+      dockerfile: Dockerfile.consumer
+    env_file:
+      - .env
+    environment:
+      PUBSUB_EMULATOR_HOST: pubsub:8681
+
+    depends_on:
+      pubsub:
+        condition: service_healthy
+      rust-publisher:
+        condition: service_healthy

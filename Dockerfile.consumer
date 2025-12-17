@@ -1,0 +1,8 @@
+FROM rust:1.90-bookworm AS builder
+WORKDIR /usr/src/app
+COPY . .
+RUN cargo build --release -p consumer
+
+FROM ubuntu:latest AS runtime
+COPY --from=builder /usr/src/app/target/release/consumer /usr/local/bin/consumer
+CMD ["consumer"]
