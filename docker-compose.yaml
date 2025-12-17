@@ -1,0 +1,7 @@
+services:
+  pubsub:
+    image: thekevjames/gcloud-pubsub-emulator:latest
+    env_file:
+      - .env
+    ports:
+      - "8681:8681"
