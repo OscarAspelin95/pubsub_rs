@@ -1,9 +1,8 @@
-[package]
-name = "pubsub_rs"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "3"
+members = ["common", "publisher", "consumer"]
 
-[dependencies]
+[workspace.dependencies]
 tokio = { version = "1", features = ["full"] }
 google-cloud-pubsub = {version = "0.30.0"}
 thiserror = {version = "2.0.17"}
@@ -14,5 +13,3 @@ tonic = {version = "*"}
 google-cloud-googleapis = {version = "*"}
 serde = {version = "1.0.228"}
 serde_json = {version = "1.0.145"}
-axum = {version = "0.8.7"}
-tower-http = {version = "0.6.8", features = ["cors"]}

@@ -1,19 +1,14 @@
-use std::time::Duration;
-
 use axum::{self, Json, extract::State, http::StatusCode, response::IntoResponse, routing::post};
+use common::{PubSubError, TestContract, create_client, create_topic};
 use dotenv::dotenv;
 use google_cloud_googleapis::pubsub::v1::PubsubMessage;
 use google_cloud_pubsub::{client::Client, topic::Topic};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tokio;
+use tower_http::cors::CorsLayer;
 use tracing::{Level, event};
 use tracing_subscriber;
-mod errors;
-use errors::PubSubError;
-use tower_http::cors::CorsLayer;
-mod pubsub;
-use pubsub::{TestContract, create_client, create_topic};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
