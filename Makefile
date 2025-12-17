@@ -1,4 +1,4 @@
-.PHONY: all start stop
+.PHONY: all start stop build
 
 all:
 	docker compose down && docker system prune -f && docker compose build &&docker compose up
@@ -8,3 +8,6 @@ start:
 
 stop:
 	docker compose down
+
+build:
+	docker compose build

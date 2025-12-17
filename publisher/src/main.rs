@@ -1,86 +1,30 @@
-use axum::{
-    self, Json,
-    extract::State,
-    http::{Request, StatusCode},
-    response::IntoResponse,
-    routing::{get, post},
-};
-use common::{PubSubError, TestContract, create_client, create_topic};
+use axum;
+use common::PubSubError;
 use dotenv::dotenv;
-use google_cloud_googleapis::pubsub::v1::PubsubMessage;
-use google_cloud_pubsub::{client::Client, topic::Topic};
-use serde::{Deserialize, Serialize};
-use serde_json::json;
 use tokio;
-use tower_http::cors::CorsLayer;
 use tracing::{Level, event};
 use tracing_subscriber;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Message {
-    message: String,
-}
+mod state;
+use state::get_state;
 
-async fn publish_message(
-    State(state): State<AppState>,
-    Json(msg): Json<Message>,
-) -> impl IntoResponse {
-    let publisher = state.topic.new_publisher(None);
-    let msg = TestContract {
-        message: msg.message,
-    };
+mod handlers;
 
-    let publish_process = tokio::spawn(async move {
-        event!(Level::INFO, "Publishing message...");
-        let pubsub_msg = PubsubMessage {
-            data: serde_json::to_vec(&msg).expect(""),
-            ..Default::default()
-        };
-        let awaiter = publisher.publish(pubsub_msg).await;
-
-        awaiter.get().await
-    });
-
-    publish_process.await.expect("").expect("");
-
-    (
-        StatusCode::OK,
-        Json(json!({"response": "message successfully published"})),
-    )
-        .into_response()
-}
-
-async fn health(State(_state): State<AppState>) -> impl IntoResponse {
-    (StatusCode::OK, Json(json!({"response": "healthy"}))).into_response()
-}
-
-#[derive(Debug, Clone)]
-pub struct AppState {
-    client: Client,
-    topic: Topic,
-}
+mod router;
+use router::create_router;
 
 #[tokio::main]
 async fn main() -> Result<(), PubSubError> {
     tracing_subscriber::fmt::init();
     dotenv().ok();
 
-    event!(Level::INFO, "Creating client...");
-    let client = create_client().await?;
+    let state = get_state().await?;
+    let router = create_router(state).await;
 
-    event!(Level::INFO, "Getting topic...");
-    let topic = create_topic(&client).await?;
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let addr = format!("0.0.0.0:{}", port);
 
-    let state = AppState { client, topic };
-
-    // Later, we'll put this in the axum handler.
-    let router = axum::Router::new()
-        .route("/send_message", post(publish_message))
-        .route("/health", get(health))
-        .layer(CorsLayer::permissive())
-        .with_state(state);
-
-    let addr = "0.0.0.0:8080";
+    event!(Level::INFO, "Binding to address {}", addr);
     let listener = tokio::net::TcpListener::bind(addr)
         .await
         .expect("Failed to bind to address.");
