@@ -25,7 +25,7 @@ pub async fn publish_message(
     let publish_process = tokio::spawn(async move {
         event!(Level::INFO, "Publishing message...");
         let pubsub_msg = PubsubMessage {
-            data: serde_json::to_vec(&msg).expect(""),
+            data: serde_json::to_vec(&msg).expect("Failed to serialize message"),
             ..Default::default()
         };
         let awaiter = publisher.publish(pubsub_msg).await;
